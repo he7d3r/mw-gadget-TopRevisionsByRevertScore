@@ -8,8 +8,8 @@ Installation
 2. Copy the following to the page you have chosen:
 
   ```javascript
-  // [[File:User:He7d3r/Tools/TopRevisionsByRevertScore.js]] (workaround for [[phab:T35355]])
-  mw.loader.load( '//meta.wikimedia.org/w/index.php?title=User:He7d3r/Tools/TopRevisionsByRevertScore.js&action=raw&ctype=text/javascript' );
+  // [[File:User:He7d3r/Tools/TopRevisionsByScore.js]] (workaround for [[phab:T35355]])
+  mw.loader.load( '//meta.wikimedia.org/w/index.php?title=User:He7d3r/Tools/TopRevisionsByScore.js&action=raw&ctype=text/javascript' );
   ```
 
 3. Clear the cache of your browser.
