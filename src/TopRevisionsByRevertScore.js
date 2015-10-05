@@ -1,11 +1,12 @@
 /**
  * Generates a table showing the scores for each revision returned from Quary
+ * 
  * @author: Helder (https://github.com/he7d3r)
  * @license: CC BY-SA 3.0 <https://creativecommons.org/licenses/by-sa/3.0/>
  */
 ( function ( mw, $ ) {
 	'use strict';
-	var model = 'reverted',
+	var model = 'damaging',
 		scores = {},
 		$target,
 		// From https://quarry.wmflabs.org/query/4947
@@ -70,7 +71,7 @@
 		$.ajax( {
 			url: oresUrl,
 			data: {
-				models: 'reverted',
+				models: 'damaging',
 				revids: revids
 					.slice( start, start + batchSize )
 					.join( '|' )
@@ -107,7 +108,7 @@
 	}
 
 	if ( mw.config.get( 'wgCanonicalSpecialPageName' ) === 'Blankpage' &&
-			mw.config.get( 'wgTitle' ).split('/')[1] === 'TopRevisionsByRevertScore'
+			mw.config.get( 'wgTitle' ).split('/')[1] === 'TopRevisionsByScore'
 	) {
 		$.when(
 			mw.loader.using( [ 'mediawiki.util', 'jquery.tablesorter' ] ),
