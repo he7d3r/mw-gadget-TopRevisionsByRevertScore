@@ -76,7 +76,7 @@
 					.slice( start, start + batchSize )
 					.join( '|' )
 			},
-			dataType: 'jsonp'
+			dataType: 'json'
 		} )
 		.done( function ( newScores ) {
 			$.extend( scores, newScores );
