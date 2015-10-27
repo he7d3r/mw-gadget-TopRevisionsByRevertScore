@@ -1,6 +1,6 @@
 /**
  * Generates a table showing the scores for each revision returned from Quary
- * 
+ *
  * @author: Helder (https://github.com/he7d3r)
  * @license: CC BY-SA 3.0 <https://creativecommons.org/licenses/by-sa/3.0/>
  */
@@ -12,18 +12,18 @@
 		// From https://quarry.wmflabs.org/query/4947
 		quarryUrl = 'https://quarry.wmflabs.org/run/36990/output/0/json?download=true',
 		oresUrl = '//ores.wmflabs.org/scores/' + mw.config.get( 'wgDBname' ) + '/';
-	function showTable ( pages ) {
+	function showTable( pages ) {
 		var i, page, $row, score, revid,
 			$table = $( '<table><tbody><tr><th>Score</th><th>Revision</th></tr></tbody></table>' )
 				.addClass( 'wikitable sortable' ),
 			$tbody = $table.find( 'tbody' );
 		for ( i = 0; i < pages.length; i++ ) {
-      		page = pages[i];
+			page = pages[ i ];
 			if ( page.score <= 0.5 ) {
 				continue;
 			}
 			revid = page.revid;
-			score = ( 100 * page.score ).toFixed(0);
+			score = ( 100 * page.score ).toFixed( 0 );
 			$row = $( '<tr>' )
 				.append(
 					$( '<td>' ).append(
@@ -52,14 +52,14 @@
 	}
 	function processScores( data ) {
 		var pages = [];
-		$.each( data, function( revid, scores ) {
+		$.each( data, function ( revid, scores ) {
 			var score = scores[ model ];
 			pages.push( {
 				revid: revid,
-				score: score && !score.error ? score.probability['true'] : 0
+				score: score && !score.error ? score.probability[ 'true' ] : 0
 			} );
 		} );
-		pages = pages.sort( function( a, b ){
+		pages = pages.sort( function ( a, b ) {
 			return b.score - a.score;
 		} );
 		showTable( pages );
@@ -85,7 +85,7 @@
 			if ( start < revids.length ) {
 				$( '#mw-content-text' ).html(
 					$( '<p></p>' ).text(
-						'Getting scores: ' + ( start / revids.length * 100 ).toFixed(0) + '%'
+						'Getting scores: ' + ( start / revids.length * 100 ).toFixed( 0 ) + '%'
 					)
 				);
 				getScores( revids, start );
@@ -99,16 +99,16 @@
 	function getRevIdsFromQuarry() {
 		var url = prompt( 'Enter a quarry URL returning the JSON with the revids:', quarryUrl );
 		if ( url ) {
-			$.getJSON( url ).done( function( data ) {
+			$.getJSON( url ).done( function ( data ) {
 				getScores( $.map( data.rows, function ( row ) {
-					return row[0];
+					return row[ 0 ];
 				} ) );
 			} );
 		}
 	}
 
 	if ( mw.config.get( 'wgCanonicalSpecialPageName' ) === 'Blankpage' &&
-			mw.config.get( 'wgTitle' ).split('/')[1] === 'TopRevisionsByScore'
+			mw.config.get( 'wgTitle' ).split( '/' )[ 1 ] === 'TopRevisionsByScore'
 	) {
 		$.when(
 			mw.loader.using( [ 'mediawiki.util', 'jquery.tablesorter' ] ),
