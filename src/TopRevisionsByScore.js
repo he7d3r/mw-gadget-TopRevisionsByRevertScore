@@ -6,61 +6,56 @@
  */
 ( function ( mw, $ ) {
 	'use strict';
-	var model = 'damaging',
+	var models = [ 'damaging', 'goodfaith' ],
 		scores = {},
-		$target,
 		// From https://quarry.wmflabs.org/query/4947
-		quarryUrl = 'https://quarry.wmflabs.org/run/36990/output/0/json?download=true',
+		quarryUrl = 'https://quarry.wmflabs.org/run/46392/output/0/json?download=true',
 		oresUrl = '//ores.wmflabs.org/scores/' + mw.config.get( 'wgDBname' ) + '/';
 	function showTable( pages ) {
-		var i, page, $row, score, revid,
-			$table = $( '<table><tbody><tr><th>Score</th><th>Revision</th></tr></tbody></table>' )
-				.addClass( 'wikitable sortable' ),
-			$tbody = $table.find( 'tbody' );
+		var c, i, page, revid, row, url, score,
+			table = '{| class="wikitable sortable"\n|+ Edits by score\n',
+			headers = [ 'Revision', 'Status' ];
+		for ( c = 0; c < models.length; c++ ) {
+			headers.unshift( models[ c ] );
+		}
+		table += '! ' + headers.join( ' !! ' );
 		for ( i = 0; i < pages.length; i++ ) {
 			page = pages[ i ];
-			if ( page.score <= 0.5 ) {
+			if ( page.score[ 0 ] <= 0.7 ) {
 				continue;
 			}
 			revid = page.revid;
-			score = ( 100 * page.score ).toFixed( 0 );
-			$row = $( '<tr>' )
-				.append(
-					$( '<td>' ).append(
-						$( '<a>' )
-							.attr(
-								'href',
-								oresUrl + '?models=' + model +
-									'&revids=' + revid
-							)
-							.text( score + '%' )
-					),
-					$( '<td>' ).append(
-						$( '<a>' )
-							.attr( 'href', mw.util.getUrl( '', {
-								diff: revid
-							} ) )
-							.text( page.revid )
-					)
-				);
-			$tbody.append( $row );
+			row = [
+				'[[Special:Diff/' + revid + '|' + revid + ']]',
+				''
+			];
+			url = oresUrl + '?models=' + models.join( '%7C' ) + '&revids=' + revid;
+			for ( c = 0; c < models.length; c++ ) {
+				score = ( 100 * page.score[ c ] ).toFixed( 0 );
+				row.unshift( '[' + url + ' ' + score + '%]' );
+			}
+			table += '\n|-\n|' + row.join( ' || ' );
 		}
+		table += '\n|}';
 		$( '#mw-content-text' ).empty()
-		.append(
-			$table.tablesorter()
-		);
+			.append( $( '<pre>' ).text( table ) );
 	}
 	function processScores( data ) {
 		var pages = [];
 		$.each( data, function ( revid, scores ) {
-			var score = scores[ model ];
-			pages.push( {
-				revid: revid,
-				score: score && !score.error ? score.probability[ 'true' ] : 0
-			} );
+			var i, score,
+				data = {
+					revid: revid
+				};
+			data.score = [];
+			for ( i = 0; i < models.length; i++ ) {
+				score = scores[ models [ i ] ];
+				data.score.push( score && !score.error ? score.probability[ 'true' ] : 0 );
+			}
+			pages.push( data );
 		} );
 		pages = pages.sort( function ( a, b ) {
-			return b.score - a.score;
+			return b.score[ 0 ] - a.score[ 0 ];
 		} );
 		showTable( pages );
 	}
@@ -71,7 +66,7 @@
 		$.ajax( {
 			url: oresUrl,
 			data: {
-				models: 'damaging',
+				models: models.join( '|' ),
 				revids: revids
 					.slice( start, start + batchSize )
 					.join( '|' )
