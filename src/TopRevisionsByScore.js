@@ -6,10 +6,11 @@
  */
 ( function ( mw, $ ) {
 	'use strict';
-	var models = [ 'damaging', 'goodfaith' ],
+	var models = [ 'damaging', 'goodfaith', 'reverted' ],
 		scores = {},
-		// From https://quarry.wmflabs.org/query/4947
-		quarryUrl = 'https://quarry.wmflabs.org/run/46392/output/0/json?download=true',
+		// From https://quarry.wmflabs.org/query/5093
+		// https://quarry.wmflabs.org/run/80200/output/0/json?download=true
+		quarryUrl = 'https://quarry.wmflabs.org/query/5093/result/latest/0/json',
 		oresUrl = '//ores.wmflabs.org/scores/' + mw.config.get( 'wgDBname' ) + '/';
 	function showTable( pages ) {
 		var c, i, page, revid, row, url, score,
