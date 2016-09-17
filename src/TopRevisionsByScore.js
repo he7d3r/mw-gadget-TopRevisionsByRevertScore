@@ -81,7 +81,7 @@
 			if ( start < revids.length ) {
 				$( '#mw-content-text' ).html(
 					$( '<p></p>' ).text(
-						'Getting scores: ' + ( start / revids.length * 100 ).toFixed( 0 ) + '%'
+						'Getting scores: ' + ( start / revids.length * 100 ).toFixed( 1 ) + '%'
 					)
 				);
 				getScores( revids, start );
