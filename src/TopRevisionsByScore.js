@@ -11,7 +11,7 @@
 		// From https://quarry.wmflabs.org/query/5093
 		// https://quarry.wmflabs.org/run/80200/output/0/json?download=true
 		quarryUrl = 'https://quarry.wmflabs.org/query/5093/result/latest/0/json',
-		oresUrl = '//ores.wmflabs.org/scores/' + mw.config.get( 'wgDBname' ) + '/';
+		oresUrl = '//ores.wikimedia.org/scores/' + mw.config.get( 'wgDBname' ) + '/';
 	function showTable( pages ) {
 		var c, i, page, revid, row, url, score,
 			table = '{| class="wikitable sortable"\n|+ Edits by score\n',
