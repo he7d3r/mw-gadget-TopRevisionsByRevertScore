@@ -6,12 +6,12 @@
  */
 ( function ( mw, $ ) {
 	'use strict';
-	var models = [ 'damaging', 'goodfaith', 'reverted' ],
+	var models = [ 'damaging', 'goodfaith' ],
+		damagingScoreThreshold = 0.7,
 		scores = {},
-		// From https://quarry.wmflabs.org/query/5093
-		// https://quarry.wmflabs.org/run/80200/output/0/json?download=true
-		quarryUrl = 'https://quarry.wmflabs.org/query/5093/result/latest/0/json',
-		oresUrl = '//ores.wikimedia.org/scores/' + mw.config.get( 'wgDBname' ) + '/';
+		// From https://quarry.wmcloud.org/query/5093
+		quarryUrl = 'https://quarry.wmcloud.org/run/832579/output/0/json',
+		oresUrl = '//ores.wikimedia.org/v3/scores/' + mw.config.get( 'wgDBname' ) + '/';
 	function showTable( pages ) {
 		var c, i, page, revid, row, url, score,
 			table = '{| class="wikitable sortable"\n|+ Edits by score\n',
@@ -22,7 +22,7 @@
 		table += '! ' + headers.join( ' !! ' );
 		for ( i = 0; i < pages.length; i++ ) {
 			page = pages[ i ];
-			if ( page.score[ 0 ] <= 0.7 ) {
+			if ( page.score[ 0 ] <= damagingScoreThreshold ) {
 				continue;
 			}
 			revid = page.revid;
@@ -50,7 +50,7 @@
 				};
 			data.score = [];
 			for ( i = 0; i < models.length; i++ ) {
-				score = scores[ models [ i ] ];
+				score = scores[ models [ i ] ].score;
 				data.score.push( score && !score.error ? score.probability[ 'true' ] : 0 );
 			}
 			pages.push( data );
@@ -62,7 +62,8 @@
 	}
 
 	function getScores( revids, start ) {
-		var batchSize = 50;
+		var maxScores = 20,
+			batchSize = Math.max(1, Math.floor(maxScores / models.length));
 		start = start || 0;
 		$.ajax( {
 			url: oresUrl,
@@ -75,9 +76,8 @@
 			dataType: 'json'
 		} )
 		.done( function ( newScores ) {
-			$.extend( scores, newScores );
+			$.extend( scores, newScores[mw.config.get( 'wgDBname' )].scores );
 			start = start + batchSize;
-			console.log( start, revids.length );
 			if ( start < revids.length ) {
 				$( '#mw-content-text' ).html(
 					$( '<p></p>' ).text(
@@ -86,7 +86,6 @@
 				);
 				getScores( revids, start );
 			} else {
-				console.log( 'processScores', scores );
 				processScores( scores );
 			}
 		} );
